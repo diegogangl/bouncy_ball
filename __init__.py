@@ -103,14 +103,14 @@ class BouncyBall(bpy.types.Operator):
             pass
 
         elif event.type == 'ESC':
-            # remove_handler(self._handle, 'WINDOW')
+            remove_handler(self._handle, 'WINDOW')
             return {'CANCELLED'}
 
         return {'RUNNING_MODAL'}
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
-            # self._handle = add_handler(None, None, 'WINDOW', 'POST_PIXEL')
+            self._handle = add_handler(ball.draw, (), 'WINDOW', 'POST_PIXEL')
 
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
