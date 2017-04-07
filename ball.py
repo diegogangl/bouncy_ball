@@ -29,12 +29,10 @@ import bpy
 import bgl
 
 
-def handler(position):
+def handler(radius, fill_color, segments, modal):
     """ Draw the ball """
 
-    radius = 50
-    segments = 360*10
-    fill_color = (1, 0, 0)
+    position = modal._position
     line_color = tuple([value - 0.5 for value in fill_color])
     glossy_color = tuple([value + 0.8 for value in fill_color])
     glossy_position = (position[0] + radius/2, position[1] + radius/2.5)

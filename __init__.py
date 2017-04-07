@@ -112,11 +112,10 @@ class BouncyBall(bpy.types.Operator):
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
 
-            settings = (
-                            (context.area.width / 2, context.area.height / 2),
-                       )
+            self._position = (context.area.width / 2, context.area.height / 2)
+            settings = (50, (1, 0, 0), 360*5,  self)
 
-            self._handle = add_handler(ball.handler, settings, 
+            self._handle = add_handler(ball.handler, settings,
                                        'WINDOW', 'POST_PIXEL')
 
             context.window_manager.modal_handler_add(self)
