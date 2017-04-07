@@ -36,15 +36,26 @@ def draw(position):
     segments = 360*10
     color = (1, 0, 0)
 
+    draw_circle(color, radius, position, segments)
+
+    # restore opengl defaults
+    bgl.glLineWidth(1)
+    bgl.glDisable(bgl.GL_BLEND)
+    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
+
+
+def draw_circle(color, radius, position, segments, fill=True):
+
     theta = 2 * math.pi / segments
     tangential_factor = math.tan(theta)
     radial_factor = math.cos(theta)
+    gl_type = bgl.GL_POLYGON if fill else bgl.GL_LINE_LOOP
 
     x = radius
     y = 0
 
     bgl.glColor3f(*color)
-    bgl.glBegin(bgl.GL_POLYGON)
+    bgl.glBegin(gl_type)
 
     for i in range(segments):
         bgl.glVertex2f(x + position[0], y + position[1])
@@ -54,7 +65,3 @@ def draw(position):
 
     bgl.glEnd()
 
-    # restore opengl defaults
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
-    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
