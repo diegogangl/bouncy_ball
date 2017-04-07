@@ -29,13 +29,12 @@ import bpy
 import bgl
 
 
-def draw():
+def draw(position):
     """ Draw the ball """
 
     radius = 50
     segments = 360*10
     color = (1, 0, 0)
-    position = (100, 100)
 
     theta = 2 * math.pi / segments
     tangential_factor = math.tan(theta)
