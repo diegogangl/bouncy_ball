@@ -80,6 +80,7 @@ def setup_addon_modules(path, package_name, reload):
 
 modules = setup_addon_modules(__path__, __name__, "bpy" in locals())
 import bpy
+from . import ball
 
 
 # ------------------------------------------------------------------------------
