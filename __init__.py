@@ -116,7 +116,7 @@ class BouncyBall(bpy.types.Operator):
                             (context.area.width / 2, context.area.height / 2),
                        )
 
-            self._handle = add_handler(ball.draw, settings, 
+            self._handle = add_handler(ball.handler, settings, 
                                        'WINDOW', 'POST_PIXEL')
 
             context.window_manager.modal_handler_add(self)

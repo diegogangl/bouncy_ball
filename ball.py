@@ -29,7 +29,7 @@ import bpy
 import bgl
 
 
-def draw(position):
+def handler(position):
     """ Draw the ball """
 
     radius = 50
@@ -37,8 +37,10 @@ def draw(position):
     fill_color = (1, 0, 0)
     line_color = tuple([value - 0.5 for value in fill_color])
 
-    draw_circle(fill_color, radius, position, segments)
-    draw_circle(line_color, radius, position, segments, 4, False)
+    body = circle(radius, position, segments)
+
+    draw(body, fill_color)
+    draw(body, line_color, False)
 
     # restore opengl defaults
     bgl.glLineWidth(1)
@@ -46,25 +48,35 @@ def draw(position):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
-def draw_circle(color, radius, position, segments, line=4, fill=True):
+def draw(func, color, fill=True):
+    """ Draw an object using a function """
+
+    gl_type = bgl.GL_POLYGON if fill else bgl.GL_LINE_LOOP
+
+    bgl.glColor3f(*color)
+    bgl.glLineWidth(4)
+    bgl.glBegin(gl_type)
+
+    func()
+
+    bgl.glEnd()
+
+
+def circle(radius, position, segments):
+    """ Return a circle drawing function """
 
     theta = 2 * math.pi / segments
     tangential_factor = math.tan(theta)
     radial_factor = math.cos(theta)
-    gl_type = bgl.GL_POLYGON if fill else bgl.GL_LINE_LOOP
 
-    x = radius
-    y = 0
+    def draw():
+        x = radius
+        y = 0
 
-    bgl.glColor3f(*color)
-    bgl.glLineWidth(line)
-    bgl.glBegin(gl_type)
+        for i in range(segments):
+            bgl.glVertex2f(x + position[0], y + position[1])
 
-    for i in range(segments):
-        bgl.glVertex2f(x + position[0], y + position[1])
+            x = (x + (-y * tangential_factor)) * radial_factor
+            y = (y + (x * tangential_factor)) * radial_factor
 
-        x = (x + (-y * tangential_factor)) * radial_factor
-        y = (y + (x * tangential_factor)) * radial_factor
-
-    bgl.glEnd()
-
+    return draw
