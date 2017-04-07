@@ -23,6 +23,8 @@ import os
 import pkgutil
 import importlib
 
+from time import time
+
 bl_info = {
     "name": "Bouncy Ball",
     "description": "Yup, just a ball that bounces around",
@@ -89,7 +91,7 @@ from . import ball
 
 add_handler = bpy.types.SpaceView3D.draw_handler_add
 remove_handler = bpy.types.SpaceView3D.draw_handler_remove
-
+add_timer = bpy.context.window_manager.event_timer_add
 
 class BouncyBall(bpy.types.Operator):
     """Create a ball that bounces around the 3D View"""
@@ -100,7 +102,12 @@ class BouncyBall(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
 
-        if event.type == 'LEFTMOUSE':
+        if event.type == 'TIMER':
+            time_delta = self._time - time()
+            self._position = ball.move(self._position, time_delta)
+            self._time = time()
+
+        elif event.type == 'LEFTMOUSE':
             pass
 
         elif event.type == 'ESC':
@@ -113,7 +120,10 @@ class BouncyBall(bpy.types.Operator):
         if context.area.type == 'VIEW_3D':
 
             self._position = (context.area.width / 2, context.area.height / 2)
+            self._time = time()
             settings = (50, (1, 0, 0), 360*5,  self)
+
+            self._timer = add_timer(1/60, context.window)
 
             self._handle = add_handler(ball.handler, settings,
                                        'WINDOW', 'POST_PIXEL')

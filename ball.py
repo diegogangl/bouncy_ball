@@ -50,6 +50,15 @@ def handler(radius, fill_color, segments, modal):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
+def move(position, time_delta):
+    """ Move the ball """
+
+    velocity = 100
+    new_position = (position[0], position[1] + velocity * time_delta)
+
+    return new_position
+
+
 def draw(func, color, fill=True):
     """ Draw an object using a function """
 
