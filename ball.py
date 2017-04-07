@@ -36,11 +36,15 @@ def handler(position):
     segments = 360*10
     fill_color = (1, 0, 0)
     line_color = tuple([value - 0.5 for value in fill_color])
+    glossy_color = tuple([value + 0.8 for value in fill_color])
+    glossy_position = (position[0] + radius/2, position[1] + radius/2.5)
 
     body = circle(radius, position, segments)
+    glossy = circle(radius/5, glossy_position, segments)
 
     draw(body, fill_color)
     draw(body, line_color, False)
+    draw(glossy, glossy_color)
 
     # restore opengl defaults
     bgl.glLineWidth(1)
