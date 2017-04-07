@@ -33,9 +33,6 @@ def handler(radius, fill_color, segments, modal):
     """ Draw the ball """
 
     position = modal._position
-    line_color = tuple([value - 0.5 for value in fill_color])
-    shadow_color = tuple([value - 0.25 for value in fill_color])
-    glossy_color = tuple([value + 0.8 for value in fill_color])
 
     glossy_position = (position[0] + radius/2, position[1] + radius/2)
     body_position = (position[0] + radius*0.1, position[1] + radius*0.1)
@@ -44,15 +41,21 @@ def handler(radius, fill_color, segments, modal):
     body = circle(radius/1.2, body_position, segments)
     glossy = circle(radius/5, glossy_position, segments)
 
-    draw(shadow, shadow_color)
+    draw(shadow, color(fill_color, -0.25))
     draw(body, fill_color)
-    draw(shadow, line_color, False)
-    draw(glossy, glossy_color)
+    draw(glossy, color(fill_color, 0.8))
+    draw(shadow, color(fill_color, -0.5), fill=False)
 
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
+
+
+def color(color, offset): 
+    """ Darken or ligthen a color """
+
+    return tuple([value + offset for value in color])
 
 
 def move(position, time_delta):
