@@ -41,6 +41,9 @@ def handler(radius, fill_color, modal):
     body = circle(radius/1.2, body_position)
     glossy = circle(radius/5, glossy_position)
 
+    bgl.glEnable(bgl.GL_MULTISAMPLE)
+    bgl.glEnable(bgl.GL_LINE_SMOOTH)
+
     draw(shadow, color(fill_color, -0.25))
     draw(body, fill_color)
     draw(glossy, color(fill_color, 0.8))
