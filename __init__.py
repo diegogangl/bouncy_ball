@@ -115,11 +115,13 @@ class BouncyBall(bpy.types.Operator):
             dist = math.sqrt(dx*dx + dy*dy)
 
             if dist <= 50:
+                context.window.cursor_set('HAND')
                 self._drag = True
                 self._drag_time = time()
                 self._drag_origin = (event.mouse_region_x, event.mouse_region_y)
 
         elif event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
+            context.window.cursor_set('DEFAULT')
             self._drag = False
             current_position = (event.mouse_region_x, event.mouse_region_y)
             time_delta = time() - self._drag_time
