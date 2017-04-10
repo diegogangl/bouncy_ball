@@ -24,6 +24,8 @@ import pkgutil
 import importlib
 import math
 
+from time import time
+
 bl_info = {
     "name": "Bouncy Ball",
     "description": "Yup, just a ball that bounces around",
@@ -114,9 +116,21 @@ class BouncyBall(bpy.types.Operator):
 
             if dist <= 50:
                 self._drag = True
+                self._drag_time = time()
+                self._drag_origin = (event.mouse_region_x, event.mouse_region_y)
 
         elif event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
             self._drag = False
+            current_position = (event.mouse_region_x, event.mouse_region_y)
+            time_delta = time() - self._drag_time
+            space_delta = (self._drag_origin[0] - event.mouse_region_x,
+                           self._drag_origin[1] - event.mouse_region_y)
+
+            release_velocity = (space_delta[0] * (1/time_delta),
+                                space_delta[1] * (1/time_delta))
+
+            self._position, self._velocity = ball.move(current_position,
+                                                       release_velocity)
 
         elif event.type == 'MOUSEMOVE' and self._drag:
             drag_x = min(max(event.mouse_region_x, 50),
@@ -139,6 +153,8 @@ class BouncyBall(bpy.types.Operator):
             self._position = (context.area.width / 2, context.area.height / 2)
             self._velocity = (0, 100)
             self._drag = False
+            self._drag_time = 0
+            self._drag_origin = (0,0)
             settings = (50, (1, 0, 0), self)
 
             self._timer = add_timer(1/60, context.window)
