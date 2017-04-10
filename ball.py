@@ -100,11 +100,27 @@ def circle(radius, position, segments):
 # Physics
 # ------------------------------------------------------------------------------
 
-def move(position, time_delta):
+def move(position, velocity):
     """ Move the ball """
 
-    velocity = 100
-    new_position = (position[0], position[1] + velocity * time_delta)
+    GRAVITY = 0.5
+    RESTITUTION = 0.9
 
-    return new_position
+    new_x = position[0] + (velocity[0] * -1/60)
+    new_y = position[1] + (velocity[1] * -1/60)
 
+    # The area height includes the headers, remove their height
+    # to bounce off them
+    max_y = bpy.context.area.height - 24
+    max_x = bpy.context.area.width
+
+    if new_y - 50 < 0:
+        new_y = 50
+        new_velocity = (velocity[0], (velocity[1] * -RESTITUTION) + GRAVITY)
+    elif new_y + 50 > max_y:
+        new_y = max_y - 50
+        new_velocity = (velocity[0], (velocity[1] * -RESTITUTION) + GRAVITY)
+    else:
+        new_velocity = (velocity[0], velocity[1] + GRAVITY)
+
+    return (new_x, new_y), new_velocity

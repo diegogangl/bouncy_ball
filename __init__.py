@@ -23,8 +23,6 @@ import os
 import pkgutil
 import importlib
 
-from time import time
-
 bl_info = {
     "name": "Bouncy Ball",
     "description": "Yup, just a ball that bounces around",
@@ -103,9 +101,8 @@ class BouncyBall(bpy.types.Operator):
         context.area.tag_redraw()
 
         if event.type == 'TIMER':
-            time_delta = self._time - time()
-            self._position = ball.move(self._position, time_delta)
-            self._time = time()
+            self._position, self._velocity = ball.move(self._position,
+                                                       self._velocity)
 
         elif event.type == 'LEFTMOUSE':
             pass
@@ -120,7 +117,7 @@ class BouncyBall(bpy.types.Operator):
         if context.area.type == 'VIEW_3D':
 
             self._position = (context.area.width / 2, context.area.height / 2)
-            self._time = time()
+            self._velocity = (0, 100)
             settings = (50, (1, 0, 0), 360*5,  self)
 
             self._timer = add_timer(1/60, context.window)
