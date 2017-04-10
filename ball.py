@@ -120,11 +120,22 @@ def move(position, velocity):
 
     if new_y - 50 < 0:
         new_y = 50
-        new_velocity = (velocity[0], (velocity[1] * -RESTITUTION) + GRAVITY)
+        new_velocity_y = (velocity[1] * -RESTITUTION) + GRAVITY
     elif new_y + 50 > max_y:
         new_y = max_y - 50
-        new_velocity = (velocity[0], (velocity[1] * -RESTITUTION) + GRAVITY)
+        new_velocity_y = (velocity[1] * -RESTITUTION) + GRAVITY
     else:
-        new_velocity = (velocity[0], velocity[1] + GRAVITY)
+        new_velocity_y = velocity[1] + GRAVITY
+
+    if new_x - 50 < 0:
+        new_x = 50
+        new_velocity_x = (velocity[0] * -RESTITUTION) 
+    elif new_x + 50 > max_x:
+        new_x = max_x - 50
+        new_velocity_x = (velocity[0] * -RESTITUTION) 
+    else:
+        new_velocity_x = velocity[0] 
+
+    new_velocity = (new_velocity_x, new_velocity_y)
 
     return (new_x, new_y), new_velocity
