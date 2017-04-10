@@ -52,19 +52,14 @@ def handler(radius, fill_color, segments, modal):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
+# ------------------------------------------------------------------------------
+# Drawing
+# ------------------------------------------------------------------------------
+
 def color(color, offset): 
     """ Darken or ligthen a color """
 
     return tuple([value + offset for value in color])
-
-
-def move(position, time_delta):
-    """ Move the ball """
-
-    velocity = 100
-    new_position = (position[0], position[1] + velocity * time_delta)
-
-    return new_position
 
 
 def draw(func, color, fill=True):
@@ -99,3 +94,17 @@ def circle(radius, position, segments):
             y = (y + (x * tangential_factor)) * radial_factor
 
     return draw
+
+
+# ------------------------------------------------------------------------------
+# Physics
+# ------------------------------------------------------------------------------
+
+def move(position, time_delta):
+    """ Move the ball """
+
+    velocity = 100
+    new_position = (position[0], position[1] + velocity * time_delta)
+
+    return new_position
+
