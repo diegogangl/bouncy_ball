@@ -29,7 +29,7 @@ import bpy
 import bgl
 
 
-def handler(radius, fill_color, segments, modal):
+def handler(radius, fill_color, modal):
     """ Draw the ball """
 
     position = modal._position
@@ -37,9 +37,9 @@ def handler(radius, fill_color, segments, modal):
     glossy_position = (position[0] + radius/2, position[1] + radius/2)
     body_position = (position[0] + radius*0.1, position[1] + radius*0.1)
 
-    shadow = circle(radius, position, segments)
-    body = circle(radius/1.2, body_position, segments)
-    glossy = circle(radius/5, glossy_position, segments)
+    shadow = circle(radius, position)
+    body = circle(radius/1.2, body_position)
+    glossy = circle(radius/5, glossy_position)
 
     draw(shadow, color(fill_color, -0.25))
     draw(body, fill_color)
@@ -76,9 +76,10 @@ def draw(func, color, fill=True):
     bgl.glEnd()
 
 
-def circle(radius, position, segments):
+def circle(radius, position):
     """ Return a circle drawing function """
 
+    segments = int(1000 * math.sqrt(radius))
     theta = 2 * math.pi / segments
     tangential_factor = math.tan(theta)
     radial_factor = math.cos(theta)
