@@ -22,6 +22,7 @@
 import os
 import pkgutil
 import importlib
+import math
 
 bl_info = {
     "name": "Bouncy Ball",
@@ -100,12 +101,31 @@ class BouncyBall(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
 
-        if event.type == 'TIMER':
+        if event.type == 'TIMER' and not self._drag:
             self._position, self._velocity = ball.move(self._position,
                                                        self._velocity)
 
-        elif event.type == 'LEFTMOUSE':
-            pass
+        elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
+
+            dx = event.mouse_region_x - self._position[0]
+            dy = event.mouse_region_y - self._position[1]
+
+            dist = math.sqrt(dx*dx + dy*dy)
+
+            if dist <= 50:
+                self._drag = True
+
+        elif event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
+            self._drag = False
+
+        elif event.type == 'MOUSEMOVE' and self._drag:
+            drag_x = min(max(event.mouse_region_x, 50),
+                         context.area.width - 50)
+
+            drag_y = min(max(event.mouse_region_y, 50),
+                         context.area.height - 50 - 24)
+
+            self._position = (drag_x, drag_y)
 
         elif event.type == 'ESC':
             remove_handler(self._handle, 'WINDOW')
@@ -118,6 +138,7 @@ class BouncyBall(bpy.types.Operator):
 
             self._position = (context.area.width / 2, context.area.height / 2)
             self._velocity = (0, 100)
+            self._drag = False
             settings = (50, (1, 0, 0), 360*5,  self)
 
             self._timer = add_timer(1/60, context.window)
