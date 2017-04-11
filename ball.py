@@ -50,15 +50,16 @@ def handler(radius, fill_color, modal):
     draw(glossy, color(fill_color, 0.8))
     draw(shadow, color(fill_color, -0.5), fill=False)
 
-    text_position = position[0] + radius + 5, position[1] + radius + 5 
-    speech_rectangle_position = text_position[0] - 10, text_position[1] - 10
-    speech_triangle_position = text_position[0] + 5, text_position[1] - 10
-    speech_rectangle = rectangle(speech_rectangle_position, (155, 30))
-    speech_triangle = triangle(speech_triangle_position, 20)
+    if not modal._first_drag:
+        text_position = position[0] + radius + 5, position[1] + radius + 5 
+        speech_rectangle_position = text_position[0] - 10, text_position[1] - 10
+        speech_triangle_position = text_position[0] + 5, text_position[1] - 10
+        speech_rectangle = rectangle(speech_rectangle_position, (155, 30))
+        speech_triangle = triangle(speech_triangle_position, 20)
 
-    draw(speech_rectangle, (1, 1, 1))
-    draw(speech_triangle, (1, 1, 1))
-    text('Drag me to start bouncing!', text_position)
+        draw(speech_rectangle, (1, 1, 1))
+        draw(speech_triangle, (1, 1, 1))
+        text('Drag me to start bouncing!', text_position)
 
     # restore opengl defaults
     bgl.glLineWidth(1)

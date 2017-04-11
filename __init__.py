@@ -116,6 +116,7 @@ class BouncyBall(bpy.types.Operator):
 
             if dist <= 50:
                 context.window.cursor_set('HAND')
+                self._first_drag = True
                 self._drag = True
                 self._drag_time = time()
                 self._drag_origin = (event.mouse_region_x, event.mouse_region_y)
@@ -154,10 +155,11 @@ class BouncyBall(bpy.types.Operator):
         if context.area.type == 'VIEW_3D':
 
             self._position = (context.area.width / 2, context.area.height / 2)
-            self._velocity = (0, 100)
+            self._velocity = (0, 0)
             self._drag = False
             self._drag_time = 0
             self._drag_origin = (0,0)
+            self._first_drag = False
             settings = (50, (1, 0, 0), self)
 
             self._timer = add_timer(1/60, context.window)
