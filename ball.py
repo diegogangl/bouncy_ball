@@ -27,6 +27,7 @@ import math
 
 import bpy
 import bgl
+import blf
 
 
 def handler(radius, fill_color, modal):
@@ -48,6 +49,9 @@ def handler(radius, fill_color, modal):
     draw(body, fill_color)
     draw(glossy, color(fill_color, 0.8))
     draw(shadow, color(fill_color, -0.5), fill=False)
+
+    text_position = position[0] + radius + 5, position[1] + radius + 5 
+    text('Drag me to start bouncing!', text_position)
 
     # restore opengl defaults
     bgl.glLineWidth(1)
@@ -98,6 +102,14 @@ def circle(radius, position):
             y = (y + (x * tangential_factor)) * radial_factor
 
     return draw
+
+
+def text(line, position):
+    """ Draw text on screen """
+
+    bgl.glColor3f(1, 1, 1)
+    blf.position(0, position[0], position[1], 0)
+    blf.draw(0, line)
 
 
 # ------------------------------------------------------------------------------
