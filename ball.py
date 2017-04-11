@@ -51,6 +51,13 @@ def handler(radius, fill_color, modal):
     draw(shadow, color(fill_color, -0.5), fill=False)
 
     text_position = position[0] + radius + 5, position[1] + radius + 5 
+    speech_rectangle_position = text_position[0] - 10, text_position[1] - 10
+    speech_triangle_position = text_position[0] + 5, text_position[1] - 10
+    speech_rectangle = rectangle(speech_rectangle_position, (155, 30))
+    speech_triangle = triangle(speech_triangle_position, 20)
+
+    draw(speech_rectangle, (1, 1, 1))
+    draw(speech_triangle, (1, 1, 1))
     text('Drag me to start bouncing!', text_position)
 
     # restore opengl defaults
@@ -104,10 +111,35 @@ def circle(radius, position):
     return draw
 
 
+def rectangle(position, size):
+    """ Return a rectangle drawing function """
+
+    def draw():
+
+        # Rectangle drawing
+        bgl.glVertex2f(position[0], position[1])
+        bgl.glVertex2f(position[0] + size[0], position[1])
+        bgl.glVertex2f(position[0] + size[0], position[1] + size[1])
+        bgl.glVertex2f(position[0], position[1] + size[1])
+
+    return draw
+
+
+def triangle(position, size):
+    """ Return a triangle drawing funciton """
+
+    def draw():
+        bgl.glVertex2f(position[0], position[1])
+        bgl.glVertex2f(position[0] + size, position[1])
+        bgl.glVertex2f(position[0], position[1] - size)
+
+    return draw
+
+
 def text(line, position):
     """ Draw text on screen """
 
-    bgl.glColor3f(1, 1, 1)
+    bgl.glColor3f(0.2, 0.2, 0.2)
     blf.position(0, position[0], position[1], 0)
     blf.draw(0, line)
 
