@@ -120,7 +120,8 @@ class BouncyBall(bpy.types.Operator):
                 self._drag_time = time()
                 self._drag_origin = (event.mouse_region_x, event.mouse_region_y)
 
-        elif event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
+        elif (event.type == 'LEFTMOUSE' and event.value == 'RELEASE' 
+              and self._drag):
             context.window.cursor_set('DEFAULT')
             self._drag = False
             current_position = (event.mouse_region_x, event.mouse_region_y)
