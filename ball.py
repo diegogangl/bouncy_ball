@@ -83,7 +83,7 @@ def handler(settings, modal):
 # ------------------------------------------------------------------------------
 
 
-def draw(func, color, fill=True):
+def draw(vertices, color, fill=True):
     """ Draw an object using a function """
 
     gl_type = bgl.GL_POLYGON if fill else bgl.GL_LINE_LOOP
@@ -92,7 +92,7 @@ def draw(func, color, fill=True):
     bgl.glLineWidth(4)
     bgl.glBegin(gl_type)
 
-    func()
+    [bgl.glVertex2f(*vertex) for vertex in vertices]
 
     bgl.glEnd()
 
@@ -105,42 +105,39 @@ def circle(radius, position):
     tangential_factor = math.tan(theta)
     radial_factor = math.cos(theta)
 
-    def draw():
-        x = radius
-        y = 0
+    x = radius
+    y = 0
+    vertices = []
 
-        for i in range(segments):
-            bgl.glVertex2f(x + position[0], y + position[1])
+    for i in range(segments):
+        vertices.append((x + position[0], y + position[1]))
 
-            x = (x + (-y * tangential_factor)) * radial_factor
-            y = (y + (x * tangential_factor)) * radial_factor
+        x = (x + (-y * tangential_factor)) * radial_factor
+        y = (y + (x * tangential_factor)) * radial_factor
 
-    return draw
+    return vertices
 
 
 def rectangle(position, size):
     """ Return a rectangle drawing function """
 
-    def draw():
-
-        # Rectangle drawing
-        bgl.glVertex2f(position[0], position[1])
-        bgl.glVertex2f(position[0] + size[0], position[1])
-        bgl.glVertex2f(position[0] + size[0], position[1] + size[1])
-        bgl.glVertex2f(position[0], position[1] + size[1])
-
-    return draw
+    return [
+            (position[0], position[1]),
+            (position[0] + size[0], position[1]),
+            (position[0] + size[0], position[1] + size[1]),
+            (position[0], position[1] + size[1]),
+           ]
 
 
 def triangle(position, size):
     """ Return a triangle drawing funciton """
 
-    def draw():
-        bgl.glVertex2f(position[0], position[1])
-        bgl.glVertex2f(position[0] + size, position[1])
-        bgl.glVertex2f(position[0], position[1] - size)
+    return [
+            (position[0], position[1]),
+            (position[0] + size, position[1]),
+            (position[0], position[1] - size),
+           ]
 
-    return draw
 
 
 def text(line, position):
