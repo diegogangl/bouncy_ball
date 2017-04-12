@@ -29,6 +29,7 @@ import bpy
 import bgl
 import blf
 
+import numpy as np
 from collections import namedtuple
 
 
@@ -43,30 +44,27 @@ def handler(settings, modal):
     position = modal._position
     dragged = modal._first_drag
 
-    glossy_position = (position[0] + settings.radius/2,
-                       position[1] + settings.radius/2)
+    glossy_position = position + settings.radius / 2
 
-    body_position = (position[0] + settings.radius*0.1,
-                     position[1] + settings.radius*0.1)
+    body_position = position + settings.radius / 10
 
     shadow = circle(settings.radius, position)
-    body = circle(settings.radius/1.2, body_position)
-    glossy = circle(settings.radius/5, glossy_position)
+    body = circle(settings.radius / 1.2, body_position)
+    glossy = circle(settings.radius / 5, glossy_position)
 
     bgl.glEnable(bgl.GL_MULTISAMPLE)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
 
-    draw(shadow, color(settings.fill_color, -0.25))
+    draw(shadow, settings.fill_color - 0.25)
     draw(body, settings.fill_color)
-    draw(glossy, color(settings.fill_color, 0.8))
-    draw(shadow, color(settings.fill_color, -0.5), fill=False)
+    draw(glossy, settings.fill_color + 0.8)
+    draw(shadow, settings.fill_color - 0.5, fill=False)
 
     if not dragged:
-        text_position = (position[0] + settings.radius + 5,
-                         position[1] + settings.radius + 5)
+        text_position = position + settings.radius + 5
 
-        speech_rectangle_position = text_position[0] - 10, text_position[1] - 10
-        speech_triangle_position = text_position[0] + 5, text_position[1] - 10
+        speech_rectangle_position = text_position - 10
+        speech_triangle_position = text_position + (5, -10)
         speech_rectangle = rectangle(speech_rectangle_position, (155, 30))
         speech_triangle = triangle(speech_triangle_position, 20)
 
@@ -193,4 +191,4 @@ def move(settings, position, velocity):
 
     new_velocity = (new_velocity_x, new_velocity_y)
 
-    return (new_x, new_y), new_velocity
+    return np.array((new_x, new_y)), new_velocity

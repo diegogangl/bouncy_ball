@@ -25,6 +25,8 @@ import importlib
 import math
 
 from time import time
+import numpy as np
+
 
 bl_info = {
     "name": "Bouncy Ball",
@@ -126,7 +128,9 @@ class BouncyBall(bpy.types.Operator):
               and self._drag):
             context.window.cursor_set('DEFAULT')
             self._drag = False
-            current_position = (event.mouse_region_x, event.mouse_region_y)
+            current_position = np.array((event.mouse_region_x,
+                                         event.mouse_region_y))
+
             time_delta = time() - self._drag_time
             space_delta = (self._drag_origin[0] - event.mouse_region_x,
                            self._drag_origin[1] - event.mouse_region_y)
@@ -145,7 +149,7 @@ class BouncyBall(bpy.types.Operator):
             drag_y = min(max(event.mouse_region_y, 50),
                          context.area.height - 50 - 24)
 
-            self._position = (drag_x, drag_y)
+            self._position = np.array((drag_x, drag_y))
 
         elif event.type == 'ESC':
             remove_handler(self._handle, 'WINDOW')
@@ -156,13 +160,14 @@ class BouncyBall(bpy.types.Operator):
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
 
-            self._position = (context.area.width / 2, context.area.height / 2)
+            self._position = np.array((context.area.width / 2,
+                                       context.area.height / 2))
             self._velocity = (0, 0)
             self._drag = False
             self._drag_time = 0
             self._drag_origin = (0,0)
             self._first_drag = False
-            self.settings = ball.Settings(50, (1, 0, 0), 0.5, 0.9)
+            self.settings = ball.Settings(50, np.array((1, 0, 0)), 0.5, 0.9)
 
             self._timer = add_timer(1/60, context.window)
 
