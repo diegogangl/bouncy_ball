@@ -44,32 +44,33 @@ def handler(settings, modal):
     position = modal._position
     dragged = modal._first_drag
 
-    glossy_position = position + settings.radius / 2
-
-    body_position = position + settings.radius / 10
-
-    shadow = circle(settings.radius, position)
-    body = circle(settings.radius / 1.2, body_position)
-    glossy = circle(settings.radius / 5, glossy_position)
-
     bgl.glEnable(bgl.GL_MULTISAMPLE)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
 
-    draw(shadow, settings.fill_color - 0.25)
-    draw(body, settings.fill_color)
-    draw(glossy, settings.fill_color + 0.8)
-    draw(shadow, settings.fill_color - 0.5, fill=False)
+    # Shadow
+    draw(circle(settings.radius, position),
+         settings.fill_color - 0.25)
+
+    # Body
+    draw(circle(settings.radius / 1.2, position + settings.radius / 10),
+         settings.fill_color)
+
+    # Glossy reflection
+    draw(circle(settings.radius / 5, position + settings.radius / 2),
+         settings.fill_color + 0.8)
+
+    # Outline
+    draw(circle(settings.radius, position),
+         settings.fill_color - 0.5, fill=False)
 
     if not dragged:
         text_position = position + settings.radius + 5
+        balloon_color = (1, 1, 1)
 
-        speech_rectangle_position = text_position - 10
-        speech_triangle_position = text_position + (5, -10)
-        speech_rectangle = rectangle(speech_rectangle_position, (155, 30))
-        speech_triangle = triangle(speech_triangle_position, 20)
+        # Speech balloon
+        draw(rectangle(text_position - 10, (155, 30)), balloon_color)
+        draw(triangle(text_position + (5, -10), 20), balloon_color)
 
-        draw(speech_rectangle, (1, 1, 1))
-        draw(speech_triangle, (1, 1, 1))
         text('Drag me to start bouncing!', text_position)
 
     # restore opengl defaults
