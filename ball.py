@@ -29,29 +29,42 @@ import bpy
 import bgl
 import blf
 
+from collections import namedtuple
 
-def handler(radius, fill_color, modal):
+
+Settings = namedtuple('Settings',
+                      ('radius', 'fill_color',
+                       'gravity', 'restitution'))
+
+
+def handler(settings, modal):
     """ Draw the ball """
 
     position = modal._position
+    dragged = modal._first_drag
 
-    glossy_position = (position[0] + radius/2, position[1] + radius/2)
-    body_position = (position[0] + radius*0.1, position[1] + radius*0.1)
+    glossy_position = (position[0] + settings.radius/2,
+                       position[1] + settings.radius/2)
 
-    shadow = circle(radius, position)
-    body = circle(radius/1.2, body_position)
-    glossy = circle(radius/5, glossy_position)
+    body_position = (position[0] + settings.radius*0.1,
+                     position[1] + settings.radius*0.1)
+
+    shadow = circle(settings.radius, position)
+    body = circle(settings.radius/1.2, body_position)
+    glossy = circle(settings.radius/5, glossy_position)
 
     bgl.glEnable(bgl.GL_MULTISAMPLE)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
 
-    draw(shadow, color(fill_color, -0.25))
-    draw(body, fill_color)
-    draw(glossy, color(fill_color, 0.8))
-    draw(shadow, color(fill_color, -0.5), fill=False)
+    draw(shadow, color(settings.fill_color, -0.25))
+    draw(body, settings.fill_color)
+    draw(glossy, color(settings.fill_color, 0.8))
+    draw(shadow, color(settings.fill_color, -0.5), fill=False)
 
-    if not modal._first_drag:
-        text_position = position[0] + radius + 5, position[1] + radius + 5 
+    if not dragged:
+        text_position = (position[0] + settings.radius + 5,
+                         position[1] + settings.radius + 5)
+
         speech_rectangle_position = text_position[0] - 10, text_position[1] - 10
         speech_triangle_position = text_position[0] + 5, text_position[1] - 10
         speech_rectangle = rectangle(speech_rectangle_position, (155, 30))
@@ -149,11 +162,8 @@ def text(line, position):
 # Physics
 # ------------------------------------------------------------------------------
 
-def move(position, velocity):
+def move(settings, position, velocity):
     """ Move the ball """
-
-    GRAVITY = 0.5
-    RESTITUTION = 0.9
 
     new_x = position[0] + (velocity[0] * -1/60)
     new_y = position[1] + (velocity[1] * -1/60)
@@ -165,19 +175,19 @@ def move(position, velocity):
 
     if new_y - 50 < 0:
         new_y = 50
-        new_velocity_y = (velocity[1] * -RESTITUTION) + GRAVITY
+        new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
     elif new_y + 50 > max_y:
         new_y = max_y - 50
-        new_velocity_y = (velocity[1] * -RESTITUTION) + GRAVITY
+        new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
     else:
-        new_velocity_y = velocity[1] + GRAVITY
+        new_velocity_y = velocity[1] + settings.gravity
 
     if new_x - 50 < 0:
         new_x = 50
-        new_velocity_x = (velocity[0] * -RESTITUTION) 
+        new_velocity_x = (velocity[0] * -settings.restitution)
     elif new_x + 50 > max_x:
         new_x = max_x - 50
-        new_velocity_x = (velocity[0] * -RESTITUTION) 
+        new_velocity_x = (velocity[0] * -settings.restitution)
     else:
         new_velocity_x = velocity[0] 
 

@@ -104,7 +104,8 @@ class BouncyBall(bpy.types.Operator):
         context.area.tag_redraw()
 
         if event.type == 'TIMER' and not self._drag:
-            self._position, self._velocity = ball.move(self._position,
+            self._position, self._velocity = ball.move(self.settings,
+                                                       self._position,
                                                        self._velocity)
 
         elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
@@ -133,7 +134,8 @@ class BouncyBall(bpy.types.Operator):
             release_velocity = (space_delta[0] * (1/time_delta),
                                 space_delta[1] * (1/time_delta))
 
-            self._position, self._velocity = ball.move(current_position,
+            self._position, self._velocity = ball.move(self.settings,
+                                                       current_position,
                                                        release_velocity)
 
         elif event.type == 'MOUSEMOVE' and self._drag:
@@ -160,11 +162,11 @@ class BouncyBall(bpy.types.Operator):
             self._drag_time = 0
             self._drag_origin = (0,0)
             self._first_drag = False
-            settings = (50, (1, 0, 0), self)
+            self.settings = ball.Settings(50, (1, 0, 0), 0.5, 0.9)
 
             self._timer = add_timer(1/60, context.window)
 
-            self._handle = add_handler(ball.handler, settings,
+            self._handle = add_handler(ball.handler, (self.settings, self),
                                        'WINDOW', 'POST_PIXEL')
 
             context.window_manager.modal_handler_add(self)
