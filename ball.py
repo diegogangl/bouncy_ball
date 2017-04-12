@@ -82,11 +82,6 @@ def handler(settings, modal):
 # Drawing
 # ------------------------------------------------------------------------------
 
-def color(color, offset): 
-    """ Darken or ligthen a color """
-
-    return tuple([value + offset for value in color])
-
 
 def draw(func, color, fill=True):
     """ Draw an object using a function """
