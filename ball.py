@@ -164,20 +164,20 @@ def move(settings, position, velocity):
     max_y = bpy.context.area.height - 24
     max_x = bpy.context.area.width
 
-    if new_y - 50 < 0:
-        new_y = 50
+    if new_y - settings.radius < 0:
+        new_y = settings.radius
         new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
-    elif new_y + 50 > max_y:
-        new_y = max_y - 50
+    elif new_y + settings.radius > max_y:
+        new_y = max_y - settings.radius
         new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
     else:
         new_velocity_y = velocity[1] + settings.gravity
 
-    if new_x - 50 < 0:
-        new_x = 50
+    if new_x - settings.radius < 0:
+        new_x = settings.radius
         new_velocity_x = (velocity[0] * -settings.restitution)
-    elif new_x + 50 > max_x:
-        new_x = max_x - 50
+    elif new_x + settings.radius > max_x:
+        new_x = max_x - settings.radius
         new_velocity_x = (velocity[0] * -settings.restitution)
     else:
         new_velocity_x = velocity[0] 
