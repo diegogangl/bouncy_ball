@@ -105,7 +105,7 @@ class BouncyBall(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
 
-        if event.type == 'TIMER' and not self._drag:
+        if event.type == 'TIMER' and not self._dragging:
             self._position = self._move(self._position)
 
         elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
@@ -117,35 +117,28 @@ class BouncyBall(bpy.types.Operator):
 
             if dist <= 50:
                 context.window.cursor_set('HAND')
-                self._first_drag = True
-                self._drag = True
-                self._drag_time = time()
-                self._drag_origin = (event.mouse_region_x, event.mouse_region_y)
 
-        elif (event.type == 'LEFTMOUSE' and event.value == 'RELEASE' 
-              and self._drag):
+                self._firstdrag = True
+                self._dragging = True
+                origin = (event.mouse_region_x, event.mouse_region_y)
+
+                self.drag, self.release = ball.drag_start(self.settings, origin)
+
+        elif (event.type == 'LEFTMOUSE' 
+              and event.value == 'RELEASE'
+              and self._dragging):
+
             context.window.cursor_set('DEFAULT')
-            self._drag = False
+            self._dragging = False
+
             current_position = np.array((event.mouse_region_x,
                                          event.mouse_region_y))
 
-            time_delta = time() - self._drag_time
-            space_delta = (self._drag_origin[0] - event.mouse_region_x,
-                           self._drag_origin[1] - event.mouse_region_y)
+            velocity = self.release(current_position)
+            self._position = self._move(current_position, velocity)
 
-            release_velocity = np.array((space_delta[0] * (1/time_delta),
-                                        space_delta[1] * (1/time_delta)))
-
-            self._position = self._move(current_position, release_velocity)
-
-        elif event.type == 'MOUSEMOVE' and self._drag:
-            drag_x = min(max(event.mouse_region_x, 50),
-                         context.area.width - 50)
-
-            drag_y = min(max(event.mouse_region_y, 50),
-                         context.area.height - 50 - 24)
-
-            self._position = np.array((drag_x, drag_y))
+        elif event.type == 'MOUSEMOVE' and self._dragging:
+            self._position = self.drag(event)
 
         elif event.type == 'ESC':
             remove_handler(self._handle, 'WINDOW')
@@ -158,10 +151,10 @@ class BouncyBall(bpy.types.Operator):
 
             self._position = np.array((context.area.width / 2,
                                        context.area.height / 2))
-            self._drag = False
-            self._drag_time = 0
-            self._drag_origin = (0,0)
-            self._first_drag = False
+            self._firstdrag = False
+            self._dragging = False
+            self.drag = None
+            self.release = None
             self.settings = ball.Settings(50, np.array((1, 0, 0)), 0.5, 0.9)
 
             self._timer = add_timer(1/60, context.window)

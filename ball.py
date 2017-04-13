@@ -30,7 +30,9 @@ import bgl
 import blf
 
 import numpy as np
+
 from collections import namedtuple
+from time import time
 
 
 Settings = namedtuple('Settings',
@@ -42,7 +44,7 @@ def handler(settings, modal):
     """ Draw the ball """
 
     position = modal._position
-    dragged = modal._first_drag
+    dragged = modal._firstdrag
 
     bgl.glEnable(bgl.GL_MULTISAMPLE)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
@@ -201,3 +203,34 @@ def physics_setup(settings):
         return target
 
     return move
+
+
+def drag_start(settings, origin):
+    """ Draggin setup """
+
+    min_xy = settings.radius
+    max_x = bpy.context.area.width - 50
+    max_y = bpy.context.area.height - 50 - 24
+
+    start_time = time()
+
+    def drag(event):
+        """ Drag the ball while clamping """
+
+        drag_x = min(max(event.mouse_region_x, min_xy), max_x)
+        drag_y = min(max(event.mouse_region_y, min_xy), max_y)
+
+        return np.array((drag_x, drag_y))
+
+    def release(position):
+        """ Calculate a target and velocity based on dragging """
+
+        time_delta = time() - start_time
+        space_delta = origin - position
+
+        # CALCULAR UN TARGET?
+
+        return space_delta * 1/time_delta
+
+    return (drag, release)
+
