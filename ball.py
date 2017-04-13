@@ -40,11 +40,11 @@ Settings = namedtuple('Settings',
                        'gravity', 'restitution'))
 
 
-def handler(settings, modal):
+def handler(settings, state):
     """ Draw the ball """
 
-    position = modal._position
-    dragged = modal._firstdrag
+    position = state['position']
+    dragged = state['first_drag']
 
     bgl.glEnable(bgl.GL_MULTISAMPLE)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
