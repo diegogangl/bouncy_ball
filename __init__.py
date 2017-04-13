@@ -158,7 +158,6 @@ class BouncyBall(bpy.types.Operator):
 
             self._position = np.array((context.area.width / 2,
                                        context.area.height / 2))
-            self._velocity = np.zeros(2)
             self._drag = False
             self._drag_time = 0
             self._drag_origin = (0,0)
