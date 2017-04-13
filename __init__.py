@@ -110,12 +110,10 @@ class BouncyBall(bpy.types.Operator):
 
         elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
 
-            dx = event.mouse_region_x - self._position[0]
-            dy = event.mouse_region_y - self._position[1]
+            click = np.array((event.mouse_region_x, event.mouse_region_y))
+            distance = np.linalg.norm(click - self._position)
 
-            dist = math.sqrt(dx*dx + dy*dy)
-
-            if dist <= 50:
+            if distance <= self.settings.radius:
                 context.window.cursor_set('HAND')
 
                 self._firstdrag = True
