@@ -85,7 +85,7 @@ def handler(settings, modal):
 
 
 def draw(vertices, color, fill=True):
-    """ Draw an object using a function """
+    """ Draw an object """
 
     gl_type = bgl.GL_POLYGON if fill else bgl.GL_LINE_LOOP
 
@@ -99,7 +99,7 @@ def draw(vertices, color, fill=True):
 
 
 def circle(radius, position):
-    """ Return a circle drawing function """
+    """ Return vertex list for a circle"""
 
     segments = int(1000 * math.sqrt(radius))
     theta = 2 * math.pi / segments
@@ -120,7 +120,7 @@ def circle(radius, position):
 
 
 def rectangle(position, size):
-    """ Return a rectangle drawing function """
+    """ Return vertex list for a rectangle"""
 
     return [
             (position[0], position[1]),
@@ -131,7 +131,7 @@ def rectangle(position, size):
 
 
 def triangle(position, size):
-    """ Return a triangle drawing funciton """
+    """ Return vertex list for a triangle"""
 
     return [
             (position[0], position[1]),
