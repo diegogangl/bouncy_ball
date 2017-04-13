@@ -65,6 +65,10 @@ def handler(settings, modal):
     draw(circle(settings.radius, position),
          settings.fill_color - 0.5, fill=False)
 
+    text('Press ESC to stop bouncing', 
+         (20, bpy.context.area.height - 85), 
+         (0.9, 0.9, 0.9))
+
     if not dragged:
         text_position = position + settings.radius + 5
         balloon_color = (1, 1, 1)
@@ -142,11 +146,10 @@ def triangle(position, size):
            ]
 
 
-
-def text(line, position):
+def text(line, position, color=(0.1, 0.1, 0.1)):
     """ Draw text on screen """
 
-    bgl.glColor3f(0.2, 0.2, 0.2)
+    bgl.glColor3f(*color)
     blf.position(0, position[0], position[1], 0)
     blf.draw(0, line)
 
