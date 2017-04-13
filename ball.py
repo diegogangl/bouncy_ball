@@ -156,32 +156,31 @@ def text(line, position):
 def move(settings, position, velocity):
     """ Move the ball """
 
-    new_x = position[0] + (velocity[0] * -1/60)
-    new_y = position[1] + (velocity[1] * -1/60)
+    target = position + (velocity * -1/60)
 
     # The area height includes the headers, remove their height
     # to bounce off them
     max_y = bpy.context.area.height - 24
     max_x = bpy.context.area.width
 
-    if new_y - settings.radius < 0:
-        new_y = settings.radius
+    if target[1] - settings.radius < 0:
+        target[1] = settings.radius
         new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
-    elif new_y + settings.radius > max_y:
-        new_y = max_y - settings.radius
+    elif target[1] + settings.radius > max_y:
+        target[1] = max_y - settings.radius
         new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
     else:
         new_velocity_y = velocity[1] + settings.gravity
 
-    if new_x - settings.radius < 0:
-        new_x = settings.radius
+    if target[0] - settings.radius < 0:
+        target[0] = settings.radius
         new_velocity_x = (velocity[0] * -settings.restitution)
-    elif new_x + settings.radius > max_x:
-        new_x = max_x - settings.radius
+    elif target[0] + settings.radius > max_x:
+        target[0] = max_x - settings.radius
         new_velocity_x = (velocity[0] * -settings.restitution)
     else:
-        new_velocity_x = velocity[0] 
+        new_velocity_x = velocity[0]
 
-    new_velocity = (new_velocity_x, new_velocity_y)
+    new_velocity = np.array((new_velocity_x, new_velocity_y))
 
-    return np.array((new_x, new_y)), new_velocity
+    return target, new_velocity

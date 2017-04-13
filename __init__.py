@@ -135,8 +135,8 @@ class BouncyBall(bpy.types.Operator):
             space_delta = (self._drag_origin[0] - event.mouse_region_x,
                            self._drag_origin[1] - event.mouse_region_y)
 
-            release_velocity = (space_delta[0] * (1/time_delta),
-                                space_delta[1] * (1/time_delta))
+            release_velocity = np.array((space_delta[0] * (1/time_delta),
+                                        space_delta[1] * (1/time_delta)))
 
             self._position, self._velocity = ball.move(self.settings,
                                                        current_position,
@@ -162,7 +162,7 @@ class BouncyBall(bpy.types.Operator):
 
             self._position = np.array((context.area.width / 2,
                                        context.area.height / 2))
-            self._velocity = (0, 0)
+            self._velocity = np.zeros(2)
             self._drag = False
             self._drag_time = 0
             self._drag_origin = (0,0)
