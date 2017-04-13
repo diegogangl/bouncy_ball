@@ -95,6 +95,7 @@ from . import ball
 add_handler = bpy.types.SpaceView3D.draw_handler_add
 remove_handler = bpy.types.SpaceView3D.draw_handler_remove
 add_timer = bpy.context.window_manager.event_timer_add
+remove_timer = bpy.context.window_manager.event_timer_remove
 
 class BouncyBall(bpy.types.Operator):
     """Create a ball that bounces around the 3D View"""
@@ -140,7 +141,9 @@ class BouncyBall(bpy.types.Operator):
 
         elif event.type == 'ESC':
             remove_handler(self._handle, 'WINDOW')
-            return {'CANCELLED'}
+            remove_timer(self._timer)
+
+            return {'FINISHED'}
 
         return {'RUNNING_MODAL'}
 
