@@ -153,34 +153,51 @@ def text(line, position):
 # Physics
 # ------------------------------------------------------------------------------
 
-def move(settings, position, velocity):
-    """ Move the ball """
-
-    target = position + (velocity * -1/60)
+def physics_setup(settings):
+    """ Setup physics and return the move function """
 
     # The area height includes the headers, remove their height
     # to bounce off them
     max_y = bpy.context.area.height - 24
     max_x = bpy.context.area.width
 
-    if target[1] - settings.radius < 0:
-        target[1] = settings.radius
-        new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
-    elif target[1] + settings.radius > max_y:
-        target[1] = max_y - settings.radius
-        new_velocity_y = (velocity[1] * -settings.restitution) + settings.gravity
-    else:
-        new_velocity_y = velocity[1] + settings.gravity
+    restitution = settings.restitution
+    gravity = settings.gravity
+    radius = settings.radius
 
-    if target[0] - settings.radius < 0:
-        target[0] = settings.radius
-        new_velocity_x = (velocity[0] * -settings.restitution)
-    elif target[0] + settings.radius > max_x:
-        target[0] = max_x - settings.radius
-        new_velocity_x = (velocity[0] * -settings.restitution)
-    else:
-        new_velocity_x = velocity[0]
+    velocity = np.zeros(2)
 
-    new_velocity = np.array((new_velocity_x, new_velocity_y))
+    def move(position, custom_velocity=None):
+        """ Move the ball """
 
-    return target, new_velocity
+        if custom_velocity is None:
+            nonlocal velocity
+        else:
+            velocity = custom_velocity
+
+        target = position + (velocity * -1/60)
+        bounce_x = False
+        bounce_y = False
+
+        if target[1] - radius < 0:
+            target[1] = radius
+            bounce_y = True
+        elif target[1] + radius > max_y:
+            target[1] = max_y - radius
+            bounce_y = True
+
+        velocity[1] = velocity[1] * -restitution if bounce_y else velocity[1]
+        velocity[1] += gravity
+
+        if target[0] - radius < 0:
+            target[0] = radius
+            bounce_x = True
+        elif target[0] + radius > max_x:
+            target[0] = max_x - radius
+            bounce_x = True
+
+        velocity[0] = velocity[0] * -restitution if bounce_x else velocity[0]
+
+        return target
+
+    return move
