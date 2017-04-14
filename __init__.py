@@ -140,6 +140,10 @@ class BouncyBall(bpy.types.Operator):
     bl_idname = "view3d.bouncy_ball"
     bl_label = "Bouncy Ball"
 
+    @classmethod
+    def poll(cls, context):
+        return context.area.type == 'VIEW_3D'
+
     def modal(self, context, event):
 
         context.area.tag_redraw()
@@ -189,36 +193,32 @@ class BouncyBall(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def invoke(self, context, event):
-        if context.area.type == 'VIEW_3D':
 
-            center = np.array((context.area.width / 2, context.area.height / 2))
-            ui_settings = context.window_manager.bouncy
-            settings = ball.Settings(ui_settings.radius,
-                                     np.array(ui_settings.color),
-                                     ui_settings.gravity / 25,
-                                     ui_settings.bounciness / 100)
+        center = np.array((context.area.width / 2, context.area.height / 2))
+        ui_settings = context.window_manager.bouncy
+        settings = ball.Settings(ui_settings.radius,
+                                 np.array(ui_settings.color),
+                                 ui_settings.gravity / 25,
+                                 ui_settings.bounciness / 100)
 
-            self.args = {
-                            'settings': settings,
-                            'ever_dragged': False,
-                            'state': ball.State(position=center,
-                                                velocity=np.zeros(2),
-                                                bounces=0)
-                        }
+        self.args = {
+                        'settings': settings,
+                        'ever_dragged': False,
+                        'state': ball.State(position=center,
+                                            velocity=np.zeros(2),
+                                            bounces=0)
+                    }
 
-            self.drag = None
-            self.release = None
+        self.drag = None
+        self.release = None
 
-            self._move = ball.physics_setup(settings)
-            self._timer = add_timer(1/60, context.window)
-            self._handle = add_handler(ball.handler, (self.args,),
-                                       'WINDOW', 'POST_PIXEL')
+        self._move = ball.physics_setup(settings)
+        self._timer = add_timer(1/60, context.window)
+        self._handle = add_handler(ball.handler, (self.args,), 
+                                   'WINDOW', 'POST_PIXEL')
 
-            context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
-        else:
-            self.report({'WARNING'}, "View3D not found, cannot bounce")
-            return {'CANCELLED'}
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
 
 
 # ------------------------------------------------------------------------------
