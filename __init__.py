@@ -141,7 +141,10 @@ class BouncyBall(bpy.types.Operator):
     bl_label = "Bouncy Ball"
 
     def modal(self, context, event):
+
         context.area.tag_redraw()
+        message = 'Press ESC to stop bouncing'
+        context.area.header_text_set(message)
 
         if event.type == 'TIMER' and not self._dragging:
             self.state['position'] = self._move(self.state['position'])

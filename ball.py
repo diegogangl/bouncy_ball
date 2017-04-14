@@ -65,10 +65,6 @@ def handler(settings, state):
     draw(circle(settings.radius, position),
          settings.fill_color - 0.5, fill=False)
 
-    text('Press ESC to stop bouncing', 
-         (20, bpy.context.area.height - 85), 
-         (0.9, 0.9, 0.9))
-
     if not dragged:
         text_position = position + settings.radius + 5
         balloon_color = (1, 1, 1)
