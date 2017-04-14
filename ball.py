@@ -63,7 +63,8 @@ def handler(settings, state):
 
     # Outline
     draw(circle(settings.radius, position),
-         settings.fill_color - 0.5, fill=False)
+         settings.fill_color - 0.5,
+         fill=False, line_thickness=settings.radius / 10)
 
     if not dragged:
         text_position = position + settings.radius + 5
@@ -86,13 +87,13 @@ def handler(settings, state):
 # ------------------------------------------------------------------------------
 
 
-def draw(vertices, color, fill=True):
+def draw(vertices, color, fill=True, line_thickness=4):
     """ Draw an object """
 
     gl_type = bgl.GL_POLYGON if fill else bgl.GL_LINE_LOOP
 
     bgl.glColor3f(*color)
-    bgl.glLineWidth(4)
+    bgl.glLineWidth(line_thickness)
     bgl.glBegin(gl_type)
 
     [bgl.glVertex2f(*vertex) for vertex in vertices]
