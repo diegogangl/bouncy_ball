@@ -231,8 +231,6 @@ def drag_start(settings, origin):
         time_delta = time() - start_time
         space_delta = origin - position
 
-        # CALCULAR UN TARGET?
-
         return space_delta * 1/time_delta
 
     return (drag, release)
