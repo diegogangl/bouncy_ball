@@ -143,11 +143,15 @@ class BouncyBall(bpy.types.Operator):
     def modal(self, context, event):
 
         context.area.tag_redraw()
-        message = 'Press ESC to stop bouncing'
-        context.area.header_text_set(message)
+        message = '{0} bounces so far | Press ESC to stop bouncing'
+        context.area.header_text_set(message.format(self.state['bounces']))
 
         if event.type == 'TIMER' and not self._dragging:
-            self.state['position'] = self._move(self.state['position'])
+            state = self._move(self.state['position'])
+            self.state['position'] = state[0]
+
+            if state[1]: 
+                self.state['bounces'] += 1
 
         elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
 
@@ -173,7 +177,11 @@ class BouncyBall(bpy.types.Operator):
             position = np.array((event.mouse_region_x, event.mouse_region_y))
             velocity = self.release(position)
 
-            self.state['position'] = self._move(position, velocity)
+            state = self._move(position, velocity)
+            self.state['position'] = state[0]
+
+            if state[1]: 
+                self.state['bounces'] += 1
 
         elif event.type == 'MOUSEMOVE' and self._dragging:
             self.state['position'] = self.drag(event)
@@ -191,6 +199,7 @@ class BouncyBall(bpy.types.Operator):
 
             self.state = {
                             'first_drag': False,
+                            'bounces': 0,
                             'position': np.array((context.area.width / 2,
                                                   context.area.height / 2)),
                          }

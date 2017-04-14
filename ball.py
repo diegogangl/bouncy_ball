@@ -200,7 +200,7 @@ def physics_setup(settings):
 
         velocity[0] = velocity[0] * -restitution if bounce_x else velocity[0]
 
-        return target
+        return target, (bounce_x or bounce_y)
 
     return move
 
