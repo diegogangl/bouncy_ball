@@ -85,7 +85,43 @@ def setup_addon_modules(path, package_name, reload):
 
 modules = setup_addon_modules(__path__, __name__, "bpy" in locals())
 import bpy
+from bpy.props import (FloatProperty, FloatVectorProperty, PointerProperty)
 from . import ball
+
+
+# ------------------------------------------------------------------------------
+# DATA
+# ------------------------------------------------------------------------------
+
+class Bouncy_PROP_Main(bpy.types.PropertyGroup):
+
+    gravity = FloatProperty(name='Gravity',
+                            description='Gravity',
+                            default=50,
+                            min=0,
+                            max=100,
+                            precision=1,
+                            subtype='PERCENTAGE')
+
+    bounciness = FloatProperty(name='Bounciness',
+                               description='Restituion coefficient',
+                               default=90,
+                               min=0,
+                               max=100,
+                               precision=1,
+                               subtype='PERCENTAGE')
+
+    radius = FloatProperty(name='Radius',
+                           description='Size of the ball',
+                           default=50,
+                           min=0.1,
+                           max=100,
+                           precision=1)
+
+    color = FloatVectorProperty(name='Color',
+                                description='Ball Color',
+                                default=(1, 0, 0),
+                                subtype='COLOR')
 
 
 # ------------------------------------------------------------------------------
@@ -175,12 +211,19 @@ class BouncyBall(bpy.types.Operator):
             return {'CANCELLED'}
 
 
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# REGISTER
+# ------------------------------------------------------------------------------
+
 def register():
-    bpy.utils.register_class(BouncyBall)
+    bpy.utils.register_module(__name__)
+    bpy.types.WindowManager.bouncy = PointerProperty(type=Bouncy_PROP_Main)
 
 
 def unregister():
-    bpy.utils.unregister_class(BouncyBall)
+    bpy.utils.unregister_module(__name__)
+    del bpy.types.WindowManager.bouncy 
 
 
 if __name__ == "__main__":
