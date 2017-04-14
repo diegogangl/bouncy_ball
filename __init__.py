@@ -133,6 +133,7 @@ remove_handler = bpy.types.SpaceView3D.draw_handler_remove
 add_timer = bpy.context.window_manager.event_timer_add
 remove_timer = bpy.context.window_manager.event_timer_remove
 
+
 class BouncyBall(bpy.types.Operator):
     """Create a ball that bounces around the 3D View"""
 
@@ -191,7 +192,11 @@ class BouncyBall(bpy.types.Operator):
                                                   context.area.height / 2)),
                          }
 
-            self.settings = ball.Settings(50, np.array((1, 0, 0)), 0.5, 0.9)
+            ui_settings = context.window_manager.bouncy
+            self.settings = ball.Settings(ui_settings.radius,
+                                          np.array(ui_settings.color),
+                                          ui_settings.gravity / 25,
+                                          ui_settings.bounciness / 100)
 
             self.drag = None
             self.release = None
@@ -212,6 +217,34 @@ class BouncyBall(bpy.types.Operator):
 
 
 # ------------------------------------------------------------------------------
+# UI
+# ------------------------------------------------------------------------------
+
+class Bouncy_Panel(bpy.types.Panel):
+    bl_idname = "bouncy.panel"
+    bl_label = "Bouncy Ball"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+    bl_category = 'Create'
+
+    def draw(self, context):
+        """ Draw terrain Panel """
+
+        layout = self.layout
+        settings = context.window_manager.bouncy
+
+        col = layout.column(align=True)
+        col.prop(settings, 'bounciness')
+        col.prop(settings, 'gravity')
+        col.prop(settings, 'color')
+        layout.separator()
+        layout.separator()
+
+        row = layout.row()
+        row.scale_y = 1.2
+        row.operator('view3d.bouncy_ball', text='Bounce!', icon='MOD_PHYSICS')
+
+
 # ------------------------------------------------------------------------------
 # REGISTER
 # ------------------------------------------------------------------------------
