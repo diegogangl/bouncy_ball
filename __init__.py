@@ -98,7 +98,7 @@ class Bouncy_PROP_Main(bpy.types.PropertyGroup):
     gravity = FloatProperty(name='Gravity',
                             description='Gravity',
                             default=50,
-                            min=0,
+                            min=10,
                             max=100,
                             precision=1,
                             subtype='PERCENTAGE')
@@ -114,13 +114,13 @@ class Bouncy_PROP_Main(bpy.types.PropertyGroup):
     radius = FloatProperty(name='Radius',
                            description='Size of the ball',
                            default=50,
-                           min=0.1,
+                           min=10,
                            max=100,
                            precision=1)
 
     color = FloatVectorProperty(name='Color',
                                 description='Ball Color',
-                                default=(1, 0, 0),
+                                default=(1, 0.36, 0),
                                 subtype='COLOR')
 
 
@@ -239,7 +239,13 @@ class Bouncy_Panel(bpy.types.Panel):
         col = layout.column(align=True)
         col.prop(settings, 'bounciness')
         col.prop(settings, 'gravity')
-        col.prop(settings, 'color')
+
+        row = layout.row()
+        row.prop(settings, 'color')
+
+        row = layout.row()
+        row.prop(settings, 'radius')
+
         layout.separator()
         layout.separator()
 
