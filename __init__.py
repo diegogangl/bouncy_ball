@@ -146,7 +146,7 @@ class BouncyBall(bpy.types.Operator):
         message = '{0} bounces so far | Press ESC to stop bouncing'
         context.area.header_text_set(message.format(self.args['state'].bounces))
 
-        if event.type == 'TIMER' and not self._dragging:
+        if event.type == 'TIMER' and not self.drag:
             self.args['state'] = self._move(self.args['state'])
 
         elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
@@ -156,18 +156,16 @@ class BouncyBall(bpy.types.Operator):
 
             if distance <= self.args['settings'].radius:
                 context.window.cursor_set('HAND')
-
                 self.args['ever_dragged'] = True
-                self._dragging = True
+
                 origin = (event.mouse_region_x, event.mouse_region_y)
 
                 self.drag, self.release = ball.drag_start(self.args['settings'],
                                                           self.args['state'],
                                                           origin)
 
-        elif (event.type == 'LEFTMOUSE' 
-              and event.value == 'RELEASE'
-              and self._dragging):
+        elif (event.type == 'LEFTMOUSE' and event.value == 'RELEASE' 
+              and self.drag):
 
             context.window.cursor_set('DEFAULT')
             self._dragging = False
@@ -176,8 +174,10 @@ class BouncyBall(bpy.types.Operator):
             velocity = self.release(position)
 
             self.args['state'] = self._move(self.args['state'], velocity)
+            self.drag = None
+            self.release = None
 
-        elif event.type == 'MOUSEMOVE' and self._dragging:
+        elif event.type == 'MOUSEMOVE' and self.drag:
             self.args['state'] = self.drag(event)
 
         elif event.type == 'ESC':
@@ -198,11 +198,6 @@ class BouncyBall(bpy.types.Operator):
                                      ui_settings.gravity / 25,
                                      ui_settings.bounciness / 100)
 
-            self.drag = None
-            self.release = None
-            self._dragging = False
-            self._timer = add_timer(1/60, context.window)
-
             self.args = {
                             'settings': settings,
                             'ever_dragged': False,
@@ -211,8 +206,11 @@ class BouncyBall(bpy.types.Operator):
                                                 bounces=0)
                         }
 
-            self._move = ball.physics_setup(settings)
+            self.drag = None
+            self.release = None
 
+            self._move = ball.physics_setup(settings)
+            self._timer = add_timer(1/60, context.window)
             self._handle = add_handler(ball.handler, (self.args,),
                                        'WINDOW', 'POST_PIXEL')
 
