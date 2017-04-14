@@ -40,34 +40,39 @@ Settings = namedtuple('Settings',
                        'gravity', 'restitution'))
 
 
-def handler(settings, state):
+State = namedtuple('State', ('position', 'velocity', 'bounces'))
+
+
+def handler(args):
     """ Draw the ball """
 
-    position = state['position']
-    dragged = state['first_drag']
+    position = args['state'].position
+    dragged = args['ever_dragged']
+    radius = args['settings'].radius
+    fill_color = args['settings'].fill_color
 
     bgl.glEnable(bgl.GL_MULTISAMPLE)
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
 
     # Shadow
-    draw(circle(settings.radius, position),
-         settings.fill_color - 0.25)
+    draw(circle(radius, position),
+         fill_color - 0.25)
 
     # Body
-    draw(circle(settings.radius / 1.2, position + settings.radius / 10),
-         settings.fill_color)
+    draw(circle(radius / 1.2, position + radius / 10),
+         fill_color)
 
     # Glossy reflection
-    draw(circle(settings.radius / 5, position + settings.radius / 2),
-         settings.fill_color + 0.8)
+    draw(circle(radius / 5, position + radius / 2),
+         fill_color + 0.8)
 
     # Outline
-    draw(circle(settings.radius, position),
-         settings.fill_color - 0.5,
-         fill=False, line_thickness=settings.radius / 10)
+    draw(circle(radius, position),
+         fill_color - 0.5,
+         fill=False, line_thickness=radius / 10)
 
     if not dragged:
-        text_position = position + settings.radius + 5
+        text_position = position + radius + 5
         balloon_color = (1, 1, 1)
 
         # Speech balloon
@@ -167,17 +172,15 @@ def physics_setup(settings):
     gravity = settings.gravity
     radius = settings.radius
 
-    velocity = np.zeros(2)
-
-    def move(position, custom_velocity=None):
+    def move(state, custom_velocity=None):
         """ Move the ball """
 
         if custom_velocity is None:
-            nonlocal velocity
+            velocity = state.velocity
         else:
             velocity = custom_velocity
 
-        target = position + (velocity * -1/60)
+        target = state.position + (velocity * -1/60)
         bounce_x = False
         bounce_y = False
 
@@ -200,12 +203,14 @@ def physics_setup(settings):
 
         velocity[0] = velocity[0] * -restitution if bounce_x else velocity[0]
 
-        return target, (bounce_x or bounce_y)
+        bounces = state.bounces + 1 if (bounce_x or bounce_y) else state.bounces 
+
+        return State(target, velocity, bounces)
 
     return move
 
 
-def drag_start(settings, origin):
+def drag_start(settings, state, origin):
     """ Draggin setup """
 
     min_xy = settings.radius
@@ -220,7 +225,7 @@ def drag_start(settings, origin):
         drag_x = min(max(event.mouse_region_x, min_xy), max_x)
         drag_y = min(max(event.mouse_region_y, min_xy), max_y)
 
-        return np.array((drag_x, drag_y))
+        return state._replace(position=np.array((drag_x, drag_y)))
 
     def release(position):
         """ Calculate a target and velocity based on dragging """

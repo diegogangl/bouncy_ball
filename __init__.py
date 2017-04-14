@@ -144,28 +144,26 @@ class BouncyBall(bpy.types.Operator):
 
         context.area.tag_redraw()
         message = '{0} bounces so far | Press ESC to stop bouncing'
-        context.area.header_text_set(message.format(self.state['bounces']))
+        context.area.header_text_set(message.format(self.args['state'].bounces))
 
         if event.type == 'TIMER' and not self._dragging:
-            state = self._move(self.state['position'])
-            self.state['position'] = state[0]
-
-            if state[1]: 
-                self.state['bounces'] += 1
+            self.args['state'] = self._move(self.args['state'])
 
         elif event.type == 'LEFTMOUSE' and event.value == 'PRESS':
 
             click = np.array((event.mouse_region_x, event.mouse_region_y))
-            distance = np.linalg.norm(click - self.state['position'])
+            distance = np.linalg.norm(click - self.args['state'].position)
 
-            if distance <= self.settings.radius:
+            if distance <= self.args['settings'].radius:
                 context.window.cursor_set('HAND')
 
-                self.state['first_drag'] = True
+                self.args['ever_dragged'] = True
                 self._dragging = True
                 origin = (event.mouse_region_x, event.mouse_region_y)
 
-                self.drag, self.release = ball.drag_start(self.settings, origin)
+                self.drag, self.release = ball.drag_start(self.args['settings'],
+                                                          self.args['state'],
+                                                          origin)
 
         elif (event.type == 'LEFTMOUSE' 
               and event.value == 'RELEASE'
@@ -177,14 +175,10 @@ class BouncyBall(bpy.types.Operator):
             position = np.array((event.mouse_region_x, event.mouse_region_y))
             velocity = self.release(position)
 
-            state = self._move(position, velocity)
-            self.state['position'] = state[0]
-
-            if state[1]: 
-                self.state['bounces'] += 1
+            self.args['state'] = self._move(self.args['state'], velocity)
 
         elif event.type == 'MOUSEMOVE' and self._dragging:
-            self.state['position'] = self.drag(event)
+            self.args['state'] = self.drag(event)
 
         elif event.type == 'ESC':
             remove_handler(self._handle, 'WINDOW')
@@ -197,28 +191,29 @@ class BouncyBall(bpy.types.Operator):
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
 
-            self.state = {
-                            'first_drag': False,
-                            'bounces': 0,
-                            'position': np.array((context.area.width / 2,
-                                                  context.area.height / 2)),
-                         }
-
+            center = np.array((context.area.width / 2, context.area.height / 2))
             ui_settings = context.window_manager.bouncy
-            self.settings = ball.Settings(ui_settings.radius,
-                                          np.array(ui_settings.color),
-                                          ui_settings.gravity / 25,
-                                          ui_settings.bounciness / 100)
+            settings = ball.Settings(ui_settings.radius,
+                                     np.array(ui_settings.color),
+                                     ui_settings.gravity / 25,
+                                     ui_settings.bounciness / 100)
 
             self.drag = None
             self.release = None
             self._dragging = False
             self._timer = add_timer(1/60, context.window)
-            self._move = ball.physics_setup(self.settings)
 
-            args = (self.settings, self.state)
+            self.args = {
+                            'settings': settings,
+                            'ever_dragged': False,
+                            'state': ball.State(position=center,
+                                                velocity=np.zeros(2),
+                                                bounces=0)
+                        }
 
-            self._handle = add_handler(ball.handler, args,
+            self._move = ball.physics_setup(settings)
+
+            self._handle = add_handler(ball.handler, (self.args,),
                                        'WINDOW', 'POST_PIXEL')
 
             context.window_manager.modal_handler_add(self)
