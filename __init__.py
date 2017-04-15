@@ -231,7 +231,7 @@ class Bouncy_Panel(bpy.types.Panel):
     bl_label = "Bouncy Ball"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
-    bl_category = 'Create'
+    bl_category = 'Tools'
 
     def draw(self, context):
         """ Draw terrain Panel """
