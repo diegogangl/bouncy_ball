@@ -42,6 +42,8 @@ Settings = namedtuple('Settings',
 
 State = namedtuple('State', ('position', 'velocity', 'bounces'))
 
+AREA_HEADER_HEIGHT = 24
+
 
 def handler(args):
     """ Draw the ball """
@@ -165,7 +167,7 @@ def physics_setup(settings):
 
     # The area height includes the headers, remove their height
     # to bounce off them
-    max_y = bpy.context.area.height - 24
+    max_y = bpy.context.area.height - AREA_HEADER_HEIGHT
     max_x = bpy.context.area.width
 
     restitution = settings.restitution
@@ -214,8 +216,8 @@ def drag_start(settings, state, origin):
     """ Draggin setup """
 
     min_xy = settings.radius
-    max_x = bpy.context.area.width - 50
-    max_y = bpy.context.area.height - 50 - 24
+    max_x = bpy.context.area.width - settings.radius
+    max_y = bpy.context.area.height - settings.radius - AREA_HEADER_HEIGHT
 
     start_time = time()
 
@@ -228,7 +230,7 @@ def drag_start(settings, state, origin):
         return state._replace(position=np.array((drag_x, drag_y)))
 
     def release(position):
-        """ Calculate a target and velocity based on dragging """
+        """ Calculate a velocity based on dragging """
 
         time_delta = time() - start_time
         space_delta = origin - position
