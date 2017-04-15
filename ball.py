@@ -35,6 +35,17 @@ from collections import namedtuple
 from time import time
 
 
+# ------------------------------------------------------------------------------
+# Constants
+# ------------------------------------------------------------------------------
+
+AREA_HEADER_HEIGHT = 24
+
+
+# ------------------------------------------------------------------------------
+# Data Structures
+# ------------------------------------------------------------------------------
+
 Settings = namedtuple('Settings',
                       ('radius', 'fill_color',
                        'gravity', 'restitution'))
@@ -42,10 +53,12 @@ Settings = namedtuple('Settings',
 
 State = namedtuple('State', ('position', 'velocity', 'bounces'))
 
-AREA_HEADER_HEIGHT = 24
 
+# ------------------------------------------------------------------------------
+# Drawing
+# ------------------------------------------------------------------------------
 
-def handler(args):
+def callback(args):
     """ Draw the ball """
 
     position = args['state'].position
@@ -57,20 +70,16 @@ def handler(args):
     bgl.glEnable(bgl.GL_LINE_SMOOTH)
 
     # Shadow
-    draw(circle(radius, position),
-         fill_color - 0.25)
+    draw(circle(radius, position), fill_color - 0.25)
 
     # Body
-    draw(circle(radius / 1.2, position + radius / 10),
-         fill_color)
+    draw(circle(radius / 1.2, position + radius / 10), fill_color)
 
     # Glossy reflection
-    draw(circle(radius / 5, position + radius / 2),
-         fill_color + 0.8)
+    draw(circle(radius / 5, position + radius / 2), fill_color + 0.8)
 
     # Outline
-    draw(circle(radius, position),
-         fill_color - 0.5,
+    draw(circle(radius, position), fill_color - 0.5,
          fill=False, line_thickness=radius / 10)
 
     if not dragged:
@@ -87,11 +96,6 @@ def handler(args):
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
-
-
-# ------------------------------------------------------------------------------
-# Drawing
-# ------------------------------------------------------------------------------
 
 
 def draw(vertices, color, fill=True, line_thickness=4):

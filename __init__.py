@@ -215,7 +215,7 @@ class BouncyBall(bpy.types.Operator):
 
         self._move = ball.physics_setup(settings)
         self._timer = add_timer(1/60, context.window)
-        self._handle = add_handler(ball.handler, (self.args,), 
+        self._handle = add_handler(ball.callback, (self.args,), 
                                    'WINDOW', 'POST_PIXEL')
 
         context.window_manager.modal_handler_add(self)
