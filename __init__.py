@@ -43,7 +43,7 @@ bl_info = {
 
 
 # ------------------------------------------------------------------------------
-# PACKAGE SETUP
+# Package Setup
 # ------------------------------------------------------------------------------
 def setup_addon_modules(path, package_name, reload):
     """
@@ -84,13 +84,14 @@ def setup_addon_modules(path, package_name, reload):
 
 
 modules = setup_addon_modules(__path__, __name__, "bpy" in locals())
+
 import bpy
 from bpy.props import (FloatProperty, FloatVectorProperty, PointerProperty)
 from . import ball
 
 
 # ------------------------------------------------------------------------------
-# DATA
+# Data
 # ------------------------------------------------------------------------------
 
 class Bouncy_PROP_Main(bpy.types.PropertyGroup):
@@ -127,7 +128,7 @@ class Bouncy_PROP_Main(bpy.types.PropertyGroup):
 
 
 # ------------------------------------------------------------------------------
-# OPERATOR
+# Operator
 # ------------------------------------------------------------------------------
 
 add_handler = bpy.types.SpaceView3D.draw_handler_add
@@ -260,7 +261,7 @@ class Bouncy_Panel(bpy.types.Panel):
 
 
 # ------------------------------------------------------------------------------
-# REGISTER
+# Register
 # ------------------------------------------------------------------------------
 
 def register():

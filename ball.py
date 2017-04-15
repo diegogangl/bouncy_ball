@@ -113,7 +113,7 @@ def draw(vertices, color, fill=True, line_thickness=4):
 
 
 def circle(radius, position):
-    """ Return vertex list for a circle"""
+    """ Return vertex list for a circle """
 
     segments = int(1000 * math.sqrt(radius))
     theta = 2 * math.pi / segments
@@ -134,7 +134,7 @@ def circle(radius, position):
 
 
 def rectangle(position, size):
-    """ Return vertex list for a rectangle"""
+    """ Return vertex list for a rectangle """
 
     return [
             (position[0], position[1]),
@@ -145,7 +145,7 @@ def rectangle(position, size):
 
 
 def triangle(position, size):
-    """ Return vertex list for a triangle"""
+    """ Return vertex list for a triangle """
 
     return [
             (position[0], position[1]),
@@ -242,4 +242,3 @@ def drag_start(settings, state, origin):
         return space_delta * 1/time_delta
 
     return (drag, release)
-
