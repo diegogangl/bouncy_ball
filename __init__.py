@@ -187,6 +187,7 @@ class BouncyBall(bpy.types.Operator):
         elif event.type == 'ESC':
             remove_handler(self._handle, 'WINDOW')
             remove_timer(self._timer)
+            context.area.header_text_set()
 
             return {'FINISHED'}
 
