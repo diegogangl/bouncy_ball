@@ -120,7 +120,9 @@ class Bouncy_PROP_Main(bpy.types.PropertyGroup):
 
     color = FloatVectorProperty(name='Color',
                                 description='Ball Color',
-                                default=(1, 0.36, 0),
+                                min=0,
+                                max=1,
+                                default=(1, 0.55, 0.06),
                                 subtype='COLOR')
 
 
