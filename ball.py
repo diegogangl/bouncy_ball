@@ -83,11 +83,11 @@ def callback(args):
          fill=False, line_thickness=radius / 10)
 
     if not dragged:
-        text_position = position + radius + 5
+        text_position = position + radius + (5/radius, 250/radius)
         balloon_color = (1, 1, 1)
 
         # Speech balloon
-        draw(rectangle(text_position - 10, (155, 30)), balloon_color)
+        draw(rectangle(text_position - (10, 10), (152, 29)), balloon_color)
         draw(triangle(text_position + (5, -10), 20), balloon_color)
 
         text('Drag me to start bouncing!', text_position)
