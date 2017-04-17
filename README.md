@@ -3,8 +3,7 @@
 ![screenshot](bounces.gif)
 
 
-This is a toy addon for that I wrote for Blender inspired by the Bouncy Ball plasmoid. It's a little side project to help 
-me learn how to work with the Bgl/Blf. I also wanted to see how far I could push Functional Programming in an addon (quite a bit all things considered).
+This is a toy addon for that I wrote for Blender inspired by the [Bouncy Ball plasmoid](https://store.kde.org/p/1172489/). It's a little side project to help me learn how to work with the Bgl/Blf. I also wanted to see how far I could push Functional Programming in an addon (quite a bit all things considered).
 
 I don't think I'll be working more on this since it's served its purpose. Feel free to fork!
 
