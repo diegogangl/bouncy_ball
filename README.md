@@ -1,5 +1,8 @@
 # Bouncy Ball
 
+![screenshot](bounces.gif)
+
+
 This is a toy addon for that I wrote for Blender inspired by the Bouncy Ball plasmoid. It's a little side project to help 
 me learn how to work with the Bgl/Blf. I also wanted to see how far I could push Functional Programming in an addon (quite a bit all things considered).
 
